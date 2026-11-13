@@ -1,52 +1,32 @@
 # Pest Population Forecasting
 
-![Python](https://img.shields.io/badge/python-3.8%2B-yellow)
-![Scikit-learn](https://img.shields.io/badge/scikit--learn-1.3-blue)
-![XGBoost](https://img.shields.io/badge/XGBoost-2.0-green)
-![Streamlit](https://img.shields.io/badge/streamlit-deployed-red)
+I ran a tournament of eight model families across regression and classification on weather and insect-trap data; Random Forest caught every catch day in the hold-out.
 
-Dual-task ML pipeline predicting insect population counts (regression) and catch-event occurrence (classification) from meteorological and entomological sensor data. A risk score per site from weather and trap data. University project on 245 rows across 5 monitoring sites, with the classification threshold tuned on the test set, so treat the scores as optimistic.
+<p>
+  <a href="https://parhamkhoshsolat-pest-prediction-dashboard.hf.space"><img src="https://img.shields.io/badge/Live_demo-Hugging_Face-5dc6ff?style=flat-square&labelColor=0a1422" alt="Live demo: Hugging Face"></a>
+  <a href="https://www.parhamkhoshsolat.com/projects/pest-forecasting"><img src="https://img.shields.io/badge/Write--up-portfolio-5dc6ff?style=flat-square&labelColor=0a1422" alt="Write-up: portfolio"></a>
+  <img src="https://img.shields.io/badge/2025-team_of_3-5dc6ff?style=flat-square&labelColor=0a1422" alt="2025: team of 3">
+</p>
 
-## Live Demo
+## Overview
 
-[Pest Risk Forecasting Dashboard](https://huggingface.co/spaces/parhamkhoshsolat/pest-prediction-dashboard)
+A dual-task pipeline that predicts insect catch counts (regression) and whether a catch happens at all (classification) from weather and trap data, with a Streamlit dashboard that gives a risk score per site.
 
-## Problem
+## What I did
 
-Field managers estimated pest risk through manual observation: slow, weather-dependent, and hard to scale. This pipeline takes sensor inputs and outputs a population count estimate and a binary catch-event prediction, with feature importance reports for non-technical stakeholders.
+I built the full pipeline.
 
-## Approach
+- Data: 245 daily samples across 5 monitoring sites over 7 weeks
+- Features: lags, 3-day rolling means, recency and calendar features
+- Regression (6): ARIMAX, SARIMAX, Prophet, Random Forest, XGBoost, LightGBM
+- Classification (5): Random Forest, XGBoost, LightGBM, LSTM, GRU
+- Validation: TimeSeriesSplit cross-validation plus a chronological hold-out
 
-### Data
+## Results
 
-Merged meteorological sensor readings with historical entomological catch records. Lag features capture delayed weather-pest relationships. Full preprocessing covers imputation, scaling, and encoding.
+Best classifier: Random Forest, AUC about 0.92 and recall 1.00 at precision 0.5 (F1 0.667) on a 49-day hold-out with 9 catch days; the target imbalance is 10.67:1. Out-of-sample regression is weak (test R² 0.35), and the deep models were close to chance. This is a small dataset and the classification threshold was tuned on the test window, so treat the scores as optimistic.
 
-### Models
-
-**Regression** (6 models): Random Forest, XGBoost, LightGBM, ARIMAX, SARIMAX, Prophet
-
-**Classification** (5 models): Random Forest, XGBoost, LightGBM, LSTM, GRU
-
-Best models selected through stratified cross-validation. Feature importance reports generated for all final models.
-
-## Project Structure
-
-```
-├── notebooks/
-│   ├── Notebook_1_Data_Preprocessing_&_EDA.ipynb
-│   ├── Notebook_2_Regression_Modeling.ipynb
-│   └── Notebook_3_Classification_Modeling.ipynb
-├── models/
-├── utils_eda.py
-├── utils_regression.py
-├── utils_classification.py
-├── app.py
-├── cleaned_engineered_data.csv
-├── requirements.txt
-└── README.md
-```
-
-## Setup
+## Run it
 
 ```bash
 git clone https://github.com/parhamkhoshsolat/pest-population-forecasting.git
@@ -55,10 +35,28 @@ pip install -r requirements.txt
 streamlit run app.py
 ```
 
-## Course
+## Project layout
 
-Information Systems & Business Intelligence — University of Naples Federico II
+```
+├── notebooks/
+│   ├── Notebook_1_Data_Preprocessing_&_EDA.ipynb
+│   ├── Notebook_2_Regression_Modeling.ipynb
+│   └── Notebook_3_Classification_Modeling.ipynb
+├── models/                 # trained models and tournament results
+├── utils_eda.py · utils_regression.py · utils_classification.py
+├── app.py                  # Streamlit dashboard
+├── cleaned_engineered_data.csv
+└── requirements.txt
+```
+
+## Team & course
+
+Information Systems and Business Intelligence, University of Naples Federico II. Team: Parham Khosh Solat, Giovanni Montanile, Farshad Farahtaj.
 
 ## License
 
-MIT
+MIT. See [`LICENSE`](LICENSE).
+
+---
+
+Part of my portfolio: [parhamkhoshsolat.com](https://www.parhamkhoshsolat.com)
