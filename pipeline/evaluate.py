@@ -169,6 +169,9 @@ def main() -> None:
         "regression": {"models": {}, "baselines": {}},
     }
 
+    test_out = test[["Date", "Location", "catch", "count", "Insects_Lag1"]].copy()
+    test_out["Date"] = test_out["Date"].dt.strftime("%Y-%m-%d")
+
     # ---------- classification: is there a new catch at this trap today? ----------
     ytr, yte = train["catch"], test["catch"]
     for name in classifiers():
@@ -189,6 +192,7 @@ def main() -> None:
             imp = sorted(zip(FEATURES, model.feature_importances_), key=lambda z: -z[1])[:5]
             entry["top_features"] = [[f, round(float(v), 3)] for f, v in imp]
         res["classification"]["models"][name] = entry
+        test_out[f"{name} catch probability"] = np.round(proba, 4)
 
     b = res["classification"]["baselines"]
     b["Catch yesterday at the same trap"] = clf_metrics(yte, test["catch_yesterday"], test["catch_yesterday"])
@@ -204,6 +208,7 @@ def main() -> None:
         t = test.assign(_p=pred)
         entry["mae_95ci"] = boot_ci(t, lambda s: mean_absolute_error(s["count"], s["_p"]), rng)
         res["regression"]["models"][name] = entry
+        test_out[f"{name} predicted count"] = np.round(pred, 4)
     rb = res["regression"]["baselines"]
     rb["Yesterday's count at the same trap"] = reg_metrics(yte_r, test["Insects_Lag1"])
     rb["Yesterday's count at the same trap"]["mae_95ci"] = boot_ci(
@@ -229,6 +234,8 @@ def main() -> None:
         summary = ("Without the leaking feature, the Random Forest passes some checks against the baselines but "
                    f"not others; with {TEST_DAYS} test dates and {n_pos} catch trap-days the differences are small.")
     res["conclusion"] = {**checks, "summary": summary}
+
+    res["test_predictions"] = test_out.rename(columns={"Insects_Lag1": "yesterday count"}).to_dict(orient="records")
 
     out_dir = os.path.join(HERE, "results")
     os.makedirs(out_dir, exist_ok=True)
@@ -268,7 +275,8 @@ def markdown(res: dict) -> str:
     for name, m in res["classification"]["models"].items():
         t = m["threshold"]
         lines.append(f"- {name}: {t['threshold']:.2f} ({t['rule']}; {t['oof_rows']} out-of-fold rows, "
-                     f"{t['oof_catch_rows']} with a catch).")
+                     f"{t['oof_catch_rows']} with a catch"
+                     + (f"; out-of-fold AUC {t['oof_auc']:.3f}" if t.get("oof_auc") is not None else "") + ").")
     rf = res["classification"]["models"]["Random Forest"]
     lines.append(f"- Random Forest test AUC over 10 seeds: {rf['auc_over_10_seeds'][0]:.3f} to {rf['auc_over_10_seeds'][1]:.3f}.")
     lines += ["", "## How many insects are in the trap today?", "",

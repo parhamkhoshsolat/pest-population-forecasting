@@ -16,8 +16,8 @@ Train: 2024-07-06 to 2024-08-13, 195 trap-days, 12 with a catch. Test: 2024-08-1
 | baseline: Predict a catch every day | | 0.305 | 0.180 | 1.000 | 0.500 | 0 41 0 9 |
 
 Thresholds:
-- Logistic regression: 0.69 (maximises out-of-fold F1 on the training dates; 120 out-of-fold rows, 7 with a catch).
-- Random Forest: 0.36 (maximises out-of-fold F1 on the training dates; 120 out-of-fold rows, 7 with a catch).
+- Logistic regression: 0.69 (maximises out-of-fold F1 on the training dates; 120 out-of-fold rows, 7 with a catch; out-of-fold AUC 0.636).
+- Random Forest: 0.36 (maximises out-of-fold F1 on the training dates; 120 out-of-fold rows, 7 with a catch; out-of-fold AUC 0.915).
 - Random Forest test AUC over 10 seeds: 0.545 to 0.629.
 
 ## How many insects are in the trap today?
