@@ -137,9 +137,18 @@ def reg_metrics(y, pred) -> dict:
             "r2": round(float(r2_score(y, pred)), 3)}
 
 
+def find_data(name: str) -> str:
+    """The CSVs sit at the repository root (GitHub) or in data/cleaned/ (Hugging Face Space)."""
+    for folder in (ROOT, os.path.join(ROOT, "data", "cleaned")):
+        path = os.path.join(folder, name)
+        if os.path.exists(path):
+            return path
+    raise FileNotFoundError(name)
+
+
 def main() -> None:
-    merged = os.path.join(ROOT, "cleaned_merged_data.csv")
-    engineered = os.path.join(ROOT, "cleaned_engineered_data.csv")
+    merged = find_data("cleaned_merged_data.csv")
+    engineered = find_data("cleaned_engineered_data.csv")
     df = build_features(merged)
     rng = np.random.default_rng(0)
 

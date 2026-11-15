@@ -9,10 +9,14 @@ import os
 import pandas as pd
 
 _HERE = os.path.dirname(os.path.abspath(__file__))
-DEFAULT_RESULTS_PATH = os.path.join(_HERE, "pipeline", "results", "results.json")
+# pipeline/ sits next to this file (GitHub) or one level up from src/ (Hugging Face Space).
+_CANDIDATES = [os.path.join(_HERE, "pipeline", "results", "results.json"),
+               os.path.join(os.path.dirname(_HERE), "pipeline", "results", "results.json")]
 
 
-def load_results(path=DEFAULT_RESULTS_PATH):
+def load_results(path=None):
+    if path is None:
+        path = next((p for p in _CANDIDATES if os.path.exists(p)), _CANDIDATES[0])
     with open(path, encoding="utf-8") as f:
         return json.load(f)
 
