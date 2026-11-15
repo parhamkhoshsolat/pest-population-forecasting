@@ -1,0 +1,230 @@
+{
+  "description": "Corrected evaluation of the pest forecasting models: leak-free features, strict date split, thresholds from training data only, simple baselines.",
+  "data": {
+    "rows": 245,
+    "traps": 5,
+    "dates": 49,
+    "catch_rows": 21,
+    "train": {
+      "first_date": "2024-07-06",
+      "last_date": "2024-08-13",
+      "dates": 39,
+      "rows": 195,
+      "catch_rows": 12
+    },
+    "test": {
+      "first_date": "2024-08-14",
+      "last_date": "2024-08-23",
+      "dates": 10,
+      "rows": 50,
+      "catch_rows": 9
+    },
+    "dates_in_both_train_and_test": 0
+  },
+  "features": [
+    "Average Temperature",
+    "Average Humidity",
+    "Temp_Range",
+    "Temp_Avg_3d",
+    "Humidity_Avg_3d",
+    "Insects_Lag1",
+    "Insects_Lag3",
+    "Recent_Activity",
+    "Days_Since_Cleaning",
+    "Month",
+    "Day",
+    "Season_Late_Summer",
+    "Location_Cicalino 2",
+    "Location_Imola 1",
+    "Location_Imola 2",
+    "Location_Imola 3"
+  ],
+  "rebuilt_feature_agreement_with_committed_csv": {
+    "Temp_Range": 1.0,
+    "Temp_Avg_3d": 1.0,
+    "Humidity_Avg_3d": 1.0,
+    "Insects_Lag1": 1.0,
+    "Insects_Lag3": 1.0,
+    "Recent_Activity": 0.918,
+    "Days_Since_Cleaning": 1.0,
+    "original_Recent_Activity_on_catch_days": "21 of 21"
+  },
+  "classification": {
+    "models": {
+      "Logistic regression": {
+        "threshold": {
+          "oof_rows": 120,
+          "oof_catch_rows": 7,
+          "threshold": 0.69,
+          "rule": "maximises out-of-fold F1 on the training dates",
+          "oof_f1_at_threshold": 0.296,
+          "oof_auc": 0.636
+        },
+        "f1": 0.222,
+        "precision": 0.222,
+        "recall": 0.222,
+        "tn_fp_fn_tp": [
+          34,
+          7,
+          7,
+          2
+        ],
+        "auc": 0.472,
+        "average_precision": 0.199,
+        "auc_95ci": [
+          0.284,
+          0.663
+        ],
+        "f1_95ci": [
+          0.0,
+          0.533
+        ]
+      },
+      "Random Forest": {
+        "threshold": {
+          "oof_rows": 120,
+          "oof_catch_rows": 7,
+          "threshold": 0.36,
+          "rule": "maximises out-of-fold F1 on the training dates",
+          "oof_f1_at_threshold": 0.5,
+          "oof_auc": 0.915
+        },
+        "f1": 0.0,
+        "precision": 0.0,
+        "recall": 0.0,
+        "tn_fp_fn_tp": [
+          41,
+          0,
+          9,
+          0
+        ],
+        "auc": 0.593,
+        "average_precision": 0.217,
+        "auc_95ci": [
+          0.375,
+          0.819
+        ],
+        "f1_95ci": [
+          0.0,
+          0.0
+        ],
+        "auc_over_10_seeds": [
+          0.545,
+          0.629
+        ],
+        "top_features": [
+          [
+            "Days_Since_Cleaning",
+            0.195
+          ],
+          [
+            "Day",
+            0.117
+          ],
+          [
+            "Temp_Avg_3d",
+            0.116
+          ],
+          [
+            "Average Humidity",
+            0.086
+          ],
+          [
+            "Recent_Activity",
+            0.079
+          ]
+        ]
+      }
+    },
+    "baselines": {
+      "Catch yesterday at the same trap": {
+        "f1": 0.267,
+        "precision": 0.333,
+        "recall": 0.222,
+        "tn_fp_fn_tp": [
+          37,
+          4,
+          7,
+          2
+        ],
+        "auc": 0.562,
+        "average_precision": 0.214
+      },
+      "Catch at the same trap in the previous 7 days": {
+        "f1": 0.435,
+        "precision": 0.357,
+        "recall": 0.556,
+        "tn_fp_fn_tp": [
+          32,
+          9,
+          4,
+          5
+        ],
+        "auc": 0.668,
+        "average_precision": 0.278
+      },
+      "Predict a catch every day": {
+        "f1": 0.305,
+        "precision": 0.18,
+        "recall": 1.0,
+        "tn_fp_fn_tp": [
+          0,
+          41,
+          0,
+          9
+        ],
+        "auc": 0.5,
+        "average_precision": 0.18
+      }
+    }
+  },
+  "regression": {
+    "models": {
+      "Ridge regression": {
+        "mae": 0.506,
+        "rmse": 0.875,
+        "r2": 0.424,
+        "mae_95ci": [
+          0.265,
+          0.766
+        ]
+      },
+      "Random Forest": {
+        "mae": 0.525,
+        "rmse": 0.988,
+        "r2": 0.266,
+        "mae_95ci": [
+          0.258,
+          0.825
+        ]
+      }
+    },
+    "baselines": {
+      "Yesterday's count at the same trap": {
+        "mae": 0.34,
+        "rmse": 0.812,
+        "r2": 0.504,
+        "mae_95ci": [
+          0.16,
+          0.54
+        ]
+      },
+      "Predict 0": {
+        "mae": 0.52,
+        "rmse": 1.265,
+        "r2": -0.203
+      },
+      "Training mean": {
+        "mae": 0.611,
+        "rmse": 1.204,
+        "r2": -0.09
+      }
+    }
+  },
+  "conclusion": {
+    "classifier_beats_best_baseline_f1": false,
+    "classifier_auc_ci_excludes_0_5": false,
+    "regressor_beats_yesterdays_count_mae": false,
+    "summary": "Without the leaking feature, no model is better than the simple baselines on this data (10 test dates, 9 catch trap-days)."
+  }
+}
