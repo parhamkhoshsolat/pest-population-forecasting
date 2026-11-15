@@ -19,7 +19,7 @@ A dual-task pipeline that predicts insect catch counts (regression) and whether 
 - Regression (6 models): ARIMAX, SARIMAX, Prophet, Random Forest, XGBoost, LightGBM
 - Classification (5 models): Random Forest, XGBoost, LightGBM, LSTM, GRU
 - Validation: TimeSeriesSplit cross-validation and a chronological hold-out
-- A Streamlit dashboard with the project overview and both model comparisons
+- A Streamlit dashboard with the project overview, the data analysis and the corrected results
 
 ## Results, corrected (November 2026)
 
@@ -49,9 +49,11 @@ Other evaluation details worth knowing:
 - The split is by row count, so 14 August appears in both the training and the test set.
 - The LSTM and GRU models used the test window for early stopping and threshold choice.
 
-**Conclusion.** With 21 catch days from one summer, there is not enough signal to predict catches from weather. More traps or more seasons would be needed. The dashboard and notebooks still show the original numbers and should be read with this correction.
+**Conclusion.** With 21 catch days from one summer, there is not enough signal to predict catches from weather. More traps or more seasons would be needed. The notebooks keep the original numbers for the record, with a note at the top of each. The dashboard now shows the corrected results.
 
 Scripts and full outputs: [`reanalysis/`](reanalysis/).
+
+**Corrected pipeline.** [`pipeline/`](pipeline/) rebuilds the features from `cleaned_merged_data.csv` using only earlier days, splits strictly by date (train 6 July to 13 August, test 14 to 23 August), chooses thresholds from training data only and reports baselines next to the models. Its results are in [`pipeline/results/RESULTS.md`](pipeline/results/RESULTS.md); the dashboard reads them from `pipeline/results/results.json`.
 
 ## Run it
 
@@ -71,6 +73,12 @@ python reanalysis/rerun_regression.py cleaned_engineered_data.csv
 python reanalysis/synthetic_data_check.py cleaned_engineered_data.csv
 ```
 
+Corrected pipeline (with [uv](https://docs.astral.sh/uv/), a few seconds on a CPU):
+
+```bash
+uv run --no-project --python 3.11 --with-requirements pipeline/requirements.txt python pipeline/evaluate.py
+```
+
 ## Project layout
 
 ```
@@ -79,8 +87,10 @@ python reanalysis/synthetic_data_check.py cleaned_engineered_data.csv
 │   ├── Notebook_2_Regression_Modeling.ipynb
 │   └── Notebook_3_Classification_Modeling.ipynb
 ├── reanalysis/             # November 2026 re-check: scripts and results
-├── models/                 # trained models and tournament results
+├── pipeline/               # corrected pipeline: features, evaluation, results
+├── models/                 # models from the original notebooks (trained with the leaking feature)
 ├── utils_eda.py · utils_regression.py · utils_classification.py
+├── corrected_results.py    # loads and shows pipeline/results/results.json
 ├── app.py                  # Streamlit dashboard
 ├── cleaned_engineered_data.csv
 └── requirements.txt
