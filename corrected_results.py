@@ -76,7 +76,7 @@ def headline(res):
 def render_story(st, res):
     h = headline(res)
     st.markdown(f"""
-**What we tried.** Predict, for each of five pheromone traps, whether a new insect will be caught on a given day
+**What we tried.** Predict, for each of five insect traps, whether a new insect will be caught on a given day
 (classification) and how many insects the trap holds (regression), from local weather and the trap's own history.
 
 **What we found.** {h['summary']} The headline scores in the original notebooks (for example a Random Forest
