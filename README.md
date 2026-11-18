@@ -3,6 +3,7 @@
 A university team project that tried to predict insect catches from weather and trap data. A later re-check found that the headline result depended on a feature that leaked the answer; without it, no model beat simple baselines on the data available. Both the original pipeline and the re-analysis are in this repository.
 
 <p>
+  <a href="https://parhamkhoshsolat-pest-prediction-dashboard.hf.space"><img src="https://img.shields.io/badge/Live_demo-Hugging_Face-5dc6ff?style=flat-square&labelColor=0a1422" alt="Live demo: Hugging Face"></a>
   <a href="https://www.parhamkhoshsolat.com/projects/pest-forecasting"><img src="https://img.shields.io/badge/Write--up-portfolio-5dc6ff?style=flat-square&labelColor=0a1422" alt="Write-up: portfolio"></a>
   <img src="https://img.shields.io/badge/2025-team_of_3-5dc6ff?style=flat-square&labelColor=0a1422" alt="2025: team of 3">
 </p>
@@ -63,6 +64,8 @@ cd pest-population-forecasting
 pip install -r requirements.txt
 streamlit run app.py
 ```
+
+The dashboard is also live on [Hugging Face Spaces](https://parhamkhoshsolat-pest-prediction-dashboard.hf.space). `requirements.txt` is for the dashboard and pins TensorFlow 2.12. Notebook 3 installs TensorFlow 2.15 in its first cell; use a separate environment if you re-run it.
 
 Re-analysis (Python 3.11):
 
